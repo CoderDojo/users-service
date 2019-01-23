@@ -5,7 +5,16 @@ const nativeEager = require('../util/nativeEager');
 
 class UsersController {
   static async delete(id, cascade, builder = UserModel.query()) {
-    return builder.where({ id }).delete();
+    const userProfile = await builder
+      .eager('profile')
+      .findById(id);
+    if (userProfile.profile.hasChildren() && cascade) {
+      await Promise.all(userProfile.profile.children.map(
+        childUserId => UsersController.delete(childUserId, false)
+      ));
+    }
+    await userProfile.profile.$query().delete();
+    return userProfile.$query().delete();
   }
 
   // does not check if exists, please do beforeHand

@@ -40,7 +40,26 @@ module.exports = async (db) => {
     parents: '{a5d60790-17c4-4a86-a023-d1558b06f118}',
     private: true,
   });
-
+  // Hard delete single
+  await db('sys_user').insert({
+    id: 'a9c0f005-aeaa-4f9f-a495-0c2c52cffccf',
+    email: 'deletemeSingle@test.com',
+    nick: 'deletemeSingle@test.com',
+    name: 'DeleteSingle me',
+    firstName: 'DeleteSingle',
+    lastName: 'Me',
+  });
+  await db('cd_profiles').insert({
+    id: '0ac7c904-7f9c-4cc8-bc82-c747666efc10',
+    userId: 'a9c0f005-aeaa-4f9f-a495-0c2c52cffccf',
+    email: 'deletemeSingle@test.com',
+    name: 'DeleteSingle me',
+    firstName: 'Delete',
+    lastName: 'Me',
+    children: '{5792635c-63e5-4a56-afdb-284c07cd75b8}',
+    private: true,
+  });
+  // Soft delete + hard delete cascade
   await db('sys_user').insert({
     id: 'e6bc11aa-b3e4-486e-9746-6472fd829904',
     email: 'deleteme@test.com',

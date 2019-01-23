@@ -3,7 +3,7 @@ const { load } = require('../../../../users/controller');
 describe('users/controller:load', () => {
   let queryBuilder;
   before(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
   beforeEach(() => {
     sandbox.reset();

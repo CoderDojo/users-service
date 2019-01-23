@@ -13,7 +13,7 @@ describe('users/handlers:delete', () => {
   let builderPreHandler;
 
   before(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     UsersController.delete = sandbox.stub();
     UsersController.softDelete = sandbox.stub();
     UsersController.exists= sandbox.stub();
