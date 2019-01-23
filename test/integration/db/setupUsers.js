@@ -56,7 +56,26 @@ module.exports = async (db) => {
     name: 'Delete me',
     firstName: 'Delete',
     lastName: 'Me',
+    children: '{5792635c-63e5-4a56-afdb-284c07cd75b8}',
     private: true,
   });
+
+  await db('sys_user').insert({
+    id: '5792635c-63e5-4a56-afdb-284c07cd75b8',
+    nick: 'ChildDelete me',
+    name: 'ChildDelete me',
+    firstName: 'ChildDelete',
+    lastName: 'Me',
+  });
+  await db('cd_profiles').insert({
+    id: '53ddf2fe-8494-4c42-ae86-ce7e3355bd42',
+    userId: '5792635c-63e5-4a56-afdb-284c07cd75b8',
+    name: 'ChildDelete me',
+    firstName: 'ChildDelete',
+    lastName: 'Me',
+    private: true,
+    parents: '{e6bc11aa-b3e4-486e-9746-6472fd829904}'
+  });
+
 
 };

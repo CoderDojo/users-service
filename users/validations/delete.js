@@ -12,7 +12,12 @@ module.exports = [
       in: ['body'],
       isBoolean: true,
       optional: true,
+    },
+    'cascade': {
+      in: ['body'],
+      isBoolean: true,
+      optional: true,
     }
-  }),
+ }),
   ValidationHelper.handleErrors,
 ];

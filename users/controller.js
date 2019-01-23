@@ -4,13 +4,18 @@ const { NoUserFound } = require('./errors');
 const nativeEager = require('../util/nativeEager');
 
 class UsersController {
-  static async delete(id, builder = UserModel.query()) {
+  static async delete(id, cascade, builder = UserModel.query()) {
     return builder.where({ id }).delete();
   }
-  static async softDelete(id, builder = UserModel.query()) {
+
+  // does not check if exists, please do beforeHand
+  static async softDelete(id, cascade, builder = UserModel.query()) {
     // TODO : how to handle passwords ?
+    // TODO : avatars 
     const email = `deleted-account+${id}@coderdojo.org`;
-    return builder
+    const res = await builder
+      .allowEager('[profile]')
+      .eager('profile')
       .where({ id })
       .patch({ 
         active: false,
@@ -19,8 +24,24 @@ class UsersController {
         name: '',
         lastName: '',
         firstName: '',
+        password: undefined,
     }).returning('*');
+    const userProfile = res[0];
+    userProfile.profile = await userProfile.profile.$query().patch({
+      email,
+      name: '',
+      lastName: '',
+      firstName: '',
+      phone: '',
+    }).returning('*');
+    if (userProfile.profile.hasChildren() && cascade) {
+      await Promise.all(userProfile.profile.children.map(
+        childUserId => UsersController.softDelete(childUserId, false)
+      ));
+    }
+    return userProfile;
   }
+
   static async load(query, related, builder = UserModel.query()) {
     const supportedRelated = nativeEager.extract(UserModel.related, related);
     const userProfile = await builder
@@ -31,7 +52,6 @@ class UsersController {
     if (!userProfile) {
       throw NoUserFound;
     }
-    // This is honestly a patch on a wooden leg
     if (userProfile.profile && related && related.indexOf('children') > -1) {
       userProfile.profile.childrenProfiles = await userProfile.profile.withChildren();
     }

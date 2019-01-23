@@ -39,6 +39,9 @@ class ProfileModel extends Model {
       'userType',
     ];
   }
+  hasChildren() {
+    return this.children && this.children.length > 0;
+  }
   withChildren() {
     const userId = `%${this.userId}%`;
     return ProfileModel.query().select(ProfileModel.publicFields).where(raw('parents::text'), 'LIKE', userId).as('children');
