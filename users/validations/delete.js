@@ -1,23 +1,22 @@
 const { checkSchema } = require('express-validator/check');
-const eventHelper = require('./helper');
 const ValidationHelper = require('../../util/ValidationHelper');
 
 module.exports = [
   checkSchema({
-    'id': {
+    id: {
       in: ['params'],
       isUUID: true,
     },
-    'soft': {
+    soft: {
       in: ['body'],
       isBoolean: true,
       optional: true,
     },
-    'cascade': {
+    cascade: {
       in: ['body'],
       isBoolean: true,
       optional: true,
-    }
- }),
+    },
+  }),
   ValidationHelper.handleErrors,
 ];

@@ -1,7 +1,4 @@
 const UsersController = require('../controller');
-const UserModel = require('../models/UserModel');
-const modelHandler = require('../../util/builderHandler');
-const { NoUserFound } = require('../errors');
 
 module.exports = [
   async (req, res, next) => {

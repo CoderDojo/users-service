@@ -28,7 +28,7 @@ before(async () => {
     },
     ...knexSnakeCaseMappers(),
   });
-//  db.on('query', console.log);
+  //  db.on('query', console.log);
   createdDbs.push({
     db,
     name,
@@ -45,10 +45,14 @@ before(async () => {
 after(() => {
   const deletePromises = [];
   createdDbs.forEach((db) => {
-    deletePromises.push(async () => {
+    deletePromises.push((async () => {
       await db.db.destroy();
+      // NOTE: Useful to verify how a test affects the db
+      // Comment the deletion of the db as well to do so,
+      // and connect via `docker-compose exec db psql -U platform`
+      // console.log(db.name);
       await knex.raw(`DROP DATABASE ${db.name}`);
-    });
+    })());
   });
   return Promise.all(deletePromises);
 });

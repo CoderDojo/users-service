@@ -9,14 +9,12 @@ describe('users/handlers:delete', () => {
   let req;
   let res;
   let handlers;
-  let builderPreHandlerFactory;
-  let builderPreHandler;
 
   before(() => {
     sandbox = sinon.createSandbox();
     UsersController.delete = sandbox.stub();
     UsersController.softDelete = sandbox.stub();
-    UsersController.exists= sandbox.stub();
+    UsersController.exists = sandbox.stub();
     handlers = proxy('../../../../users/handlers/delete', {
       '../controller': UsersController,
     });

@@ -6,6 +6,24 @@ class UserModel extends Model {
     return 'sys_user';
   }
 
+  static get QueryBuilder() {
+    return class extends QueryBuilder {
+      softDelete() {
+        const email = `deleted-account+${new Date().valueOf()}@coderdojo.org`;
+        // TODO : how to handle passwords ?
+        return this.patch({
+          active: false,
+          nick: email,
+          email,
+          name: '',
+          lastName: '',
+          firstName: '',
+          password: undefined,
+        });
+      }
+    };
+  }
+
   static get related() {
     return ['profile'];
   }

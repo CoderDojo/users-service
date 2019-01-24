@@ -93,8 +93,31 @@ module.exports = async (db) => {
     firstName: 'ChildDelete',
     lastName: 'Me',
     private: true,
-    parents: '{e6bc11aa-b3e4-486e-9746-6472fd829904}'
+    parents: '{e6bc11aa-b3e4-486e-9746-6472fd829904}',
   });
-
-
+  // User with avatar
+  await db.raw('SELECT lo_from_bytea(20723, \'garbage\');');
+  await db('sys_user').insert({
+    id: '57793065-2d8e-42f5-ab8e-be6b0bb5b4f0',
+    nick: 'deleteavatar@example.com',
+    email: 'deleteavatar@example.com',
+    name: 'DeleteAvatar me',
+    firstName: 'DeleteAvatar',
+    lastName: 'Me',
+  });
+  await db('cd_profiles').insert({
+    id: 'e8e28935-4bbe-4eab-8054-7149b26031d1',
+    userId: '57793065-2d8e-42f5-ab8e-be6b0bb5b4f0',
+    email: 'deleteavatar@example.com',
+    name: 'DeleteAvatar me',
+    firstName: 'DeleteAvatar',
+    lastName: 'Me',
+    private: true,
+    avatar: {
+      oid: '20723',
+      sizeBytes: 0,
+      name: 'avatar.png',
+      type: 'image/png',
+    },
+  });
 };

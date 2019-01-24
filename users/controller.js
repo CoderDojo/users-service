@@ -1,4 +1,3 @@
-const { raw } = require('objection');
 const UserModel = require('./models/UserModel');
 const { NoUserFound } = require('./errors');
 const nativeEager = require('../util/nativeEager');
@@ -10,8 +9,7 @@ class UsersController {
       .findById(id);
     if (userProfile.profile.hasChildren() && cascade) {
       await Promise.all(userProfile.profile.children.map(
-        childUserId => UsersController.delete(childUserId, false)
-      ));
+        childUserId => UsersController.delete(childUserId, false)));
     }
     await userProfile.profile.$query().delete();
     return userProfile.$query().delete();
@@ -19,34 +17,17 @@ class UsersController {
 
   // does not check if exists, please do beforeHand
   static async softDelete(id, cascade, builder = UserModel.query()) {
-    // TODO : how to handle passwords ?
-    // TODO : avatars 
-    const email = `deleted-account+${id}@coderdojo.org`;
     const res = await builder
       .allowEager('[profile]')
       .eager('profile')
       .where({ id })
-      .patch({ 
-        active: false,
-        nick: email,
-        email, 
-        name: '',
-        lastName: '',
-        firstName: '',
-        password: undefined,
-    }).returning('*');
+      .softDelete()
+      .returning('*');
     const userProfile = res[0];
-    userProfile.profile = await userProfile.profile.$query().patch({
-      email,
-      name: '',
-      lastName: '',
-      firstName: '',
-      phone: '',
-    }).returning('*');
+    userProfile.profile = await userProfile.profile.$query().softDelete().returning('*');
     if (userProfile.profile.hasChildren() && cascade) {
       await Promise.all(userProfile.profile.children.map(
-        childUserId => UsersController.softDelete(childUserId, false)
-      ));
+        childUserId => UsersController.softDelete(childUserId, false)));
     }
     return userProfile;
   }

@@ -40,7 +40,7 @@ describe('integration:users:load', () => {
   });
 
   it('should return 404', async () => {
-    const res = await request(app)
+    await request(app)
       .get('/users/a5d60790-17c4-4a86-a023-d1558b06f666')
       .set('Accept', 'application/json')
       .expect(404);

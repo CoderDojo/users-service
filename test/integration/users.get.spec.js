@@ -27,7 +27,7 @@ describe('integration:users:get', () => {
     expect(res.body.profile).to.have.keys(ProfileModel.publicFields);
   });
   it('should return 404', async () => {
-    const res = await request(app)
+    await request(app)
       .get('/users?email=doesnt-exists@test.com')
       .set('Accept', 'application/json')
       .expect(404);
