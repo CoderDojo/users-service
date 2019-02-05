@@ -50,6 +50,21 @@ describe('users/controller:delete', () => {
       expect(queryBuilder.delete.getCall(0)).to.have.been.calledWith();
       expect(queryBuilder.delete.getCall(1)).to.have.been.calledWith();
     });
+    it('should throw if the profile is invalid', async () => {
+      const cascade = false;
+      const $query = sandbox.stub().returns(queryBuilder);
+      const hasChildren = sandbox.stub();
+      queryBuilder.findById.onCall(0).resolves({ id: 'userId1', $query });
+      try {
+        await userController.delete('userId1', cascade, queryBuilder);
+      } catch (e) {
+        expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
+        expect(queryBuilder.findById).to.have.been.calledOnce.and.calledWith('userId1');
+        expect(hasChildren).to.not.have.been.called;
+        expect(queryBuilder.delete).to.not.have.been.called;
+        expect(e.status).to.equal(500);
+      }
+    });
 
     it('should delete multiple users when cascade is on and there are children', async () => {
       const cascade = true;
@@ -93,6 +108,20 @@ describe('users/controller:delete', () => {
       expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
       expect(queryBuilder.where).to.have.been.calledOnce.and.calledWith({ id: 'userId1' });
       expect(queryBuilder.softDelete).to.have.been.calledTwice;
+    });
+    it('should throw if the profile is invalid', async () => {
+      const hasChildren = sandbox.stub();
+      queryBuilder.returning.onCall(0).resolves([{ id: 'userId1' }]);
+      try {
+        await userController.softDelete('userId1', true, queryBuilder);
+      } catch (e) {
+        expect(queryBuilder.allowEager).to.have.been.calledOnce.and.calledWith('[profile]');
+        expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
+        expect(queryBuilder.where).to.have.been.calledOnce.and.calledWith({ id: 'userId1' });
+        expect(hasChildren).to.not.have.been.called;
+        expect(queryBuilder.softDelete).to.have.been.calledOnce;
+        expect(e.status).to.equal(500);
+      }
     });
     it('should delete multiple users when cascade is on and there are children', async () => {
       const $query = sandbox.stub().returns(queryBuilder);

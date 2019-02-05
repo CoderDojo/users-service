@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 process.on('unhandledRejection', err => logger.error(err));
-process.on('uncaughtException', logger.error);
+process.on('uncaughtException', err => logger.error(err));
 
 app.use('/users', users);
 
