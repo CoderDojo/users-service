@@ -23,12 +23,15 @@ describe('UserModel', () => {
       await qB.softDelete();
       expect(qB.patch).to.have.been.calledOnce.and.calledWith({
         active: false,
-        nick: sinon.match(/deleted-account\+\d+@coderdojo.org/),
-        email: sinon.match(/deleted-account\+\d+@coderdojo.org/),
+        nick: '',
+        email: null,
         name: '',
         lastName: '',
         firstName: '',
-        password: undefined,
+        modified: sinon.match.date,
+        phone: null,
+        pass: null,
+        salt: null,
       });
     });
   });

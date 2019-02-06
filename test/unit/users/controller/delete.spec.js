@@ -30,7 +30,17 @@ describe('users/controller:delete', () => {
       const cascade = false;
       const $query = sandbox.stub().returns(queryBuilder);
       const hasChildren = sandbox.stub().returns(true);
-      queryBuilder.findById.onCall(0).resolves({ id: 'userId1', profile: { children: ['childrenUserId1'], $query, hasChildren }, $query });
+      const hasParents = sandbox.stub().returns(false);
+      queryBuilder.findById.onCall(0).resolves({
+        id: 'userId1',
+        profile: {
+          children: ['childrenUserId1'],
+          $query,
+          hasChildren,
+          hasParents,
+        },
+        $query,
+      });
       await userController.delete('userId1', cascade, queryBuilder);
       expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
       expect(queryBuilder.findById).to.have.been.calledOnce.and.calledWith('userId1');
@@ -38,11 +48,47 @@ describe('users/controller:delete', () => {
       expect(queryBuilder.delete.getCall(0)).to.have.been.calledWith();
       expect(queryBuilder.delete.getCall(1)).to.have.been.calledWith();
     });
+    it('should delete a single user and update its parent', async () => {
+      const cascade = false;
+      const $query = sandbox.stub().returns(queryBuilder);
+      const hasChildren = sandbox.stub().returns(false);
+      const hasParents = sandbox.stub().returns(true);
+      queryBuilder.removeChild = sandbox.stub().resolves();
+      userController.load = sandbox.stub().resolves({ profile: { children: ['userId1'], $query } });
+      queryBuilder.findById.onCall(0).resolves({
+        id: 'userId1',
+        profile: {
+          userId: 'userId1',
+          parents: ['parentUserId1'],
+          $query,
+          hasChildren,
+          hasParents,
+        },
+        $query,
+      });
+      await userController.delete('userId1', cascade, queryBuilder);
+      expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
+      expect(queryBuilder.findById).to.have.been.calledOnce.and.calledWith('userId1');
+      expect(queryBuilder.delete).to.have.been.calledTwice;
+      expect(userController.load).to.have.been.calledOnce.and.calledWith({ id: 'parentUserId1' });
+      expect(queryBuilder.removeChild).to.have.been.calledOnce.and.calledWith(['userId1'], 'userId1');
+    });
+
     it('should delete a single user when cascade is on and there is no children', async () => {
       const cascade = true;
       const $query = sandbox.stub().returns(queryBuilder);
       const hasChildren = sandbox.stub().returns(false);
-      queryBuilder.findById.onCall(0).resolves({ id: 'userId1', profile: { children: null, $query, hasChildren }, $query });
+      const hasParents = sandbox.stub().returns(false);
+      queryBuilder.findById.onCall(0).resolves({
+        id: 'userId1',
+        profile: {
+          children: null,
+          $query,
+          hasChildren,
+          hasParents,
+        },
+        $query,
+      });
       await userController.delete('userId1', cascade, queryBuilder);
       expect(queryBuilder.eager).to.have.been.calledOnce.and.calledWith('profile');
       expect(queryBuilder.findById).to.have.been.calledOnce.and.calledWith('userId1');
@@ -71,8 +117,27 @@ describe('users/controller:delete', () => {
       const spy = sandbox.spy(userController, 'delete');
       const $query = sandbox.stub().returns(queryBuilder);
       const hasChildren = sandbox.stub().returns(true);
-      queryBuilder.findById.onCall(0).resolves({ id: 'userId1', profile: { children: ['childrenUserId1'], $query, hasChildren }, $query });
-      queryBuilder.findById.onCall(1).resolves({ id: 'childrenUserId', profile: { children: null, $query, hasChildren }, $query });
+      const hasParents = sandbox.stub().returns(false);
+      queryBuilder.findById.onCall(0).resolves({
+        id: 'userId1',
+        profile: {
+          children: ['childrenUserId1'],
+          $query,
+          hasChildren,
+          hasParents,
+        },
+        $query,
+      });
+      queryBuilder.findById.onCall(1).resolves({
+        id: 'childrenUserId',
+        profile: {
+          children: null,
+          $query,
+          hasChildren,
+          hasParents,
+        },
+        $query,
+      });
       await userController.delete('userId1', cascade, queryBuilder);
       expect(queryBuilder.eager).to.have.been.calledTwice.and.calledWith('profile');
       expect(queryBuilder.findById).to.have.been.calledTwice;

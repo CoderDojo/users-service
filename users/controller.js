@@ -10,6 +10,13 @@ class UsersController {
       .findById(id);
     if (!userProfile) throw NoUserFound;
     if (!userProfile.profile) throw NoProfileFound;
+    if (userProfile.profile.hasParents()) {
+      await Promise.all(userProfile.profile.parents.map(
+        async (parentUserId) => {
+          const parent = await UsersController.load({ id: parentUserId }, '[profile]');
+          return parent.profile.$query().removeChild(parent.profile.children, userProfile.id);
+        }));
+    }
     if (userProfile.profile.hasChildren() && cascade) {
       await Promise.all(userProfile.profile.children.map(
         childUserId => UsersController.delete(childUserId, false)));

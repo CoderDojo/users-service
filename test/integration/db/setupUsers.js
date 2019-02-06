@@ -56,7 +56,6 @@ module.exports = async (db) => {
     name: 'DeleteSingle me',
     firstName: 'Delete',
     lastName: 'Me',
-    children: '{5792635c-63e5-4a56-afdb-284c07cd75b8}',
     private: true,
   });
   // Soft delete + hard delete cascade
@@ -75,7 +74,7 @@ module.exports = async (db) => {
     name: 'Delete me',
     firstName: 'Delete',
     lastName: 'Me',
-    children: '{5792635c-63e5-4a56-afdb-284c07cd75b8}',
+    children: '{5792635c-63e5-4a56-afdb-284c07cd75b8,5b10692b-42eb-440d-a82c-10128e245af3}',
     private: true,
   });
 
@@ -95,6 +94,24 @@ module.exports = async (db) => {
     private: true,
     parents: '{e6bc11aa-b3e4-486e-9746-6472fd829904}',
   });
+  // Hard delete of child
+  await db('sys_user').insert({
+    id: '5b10692b-42eb-440d-a82c-10128e245af3',
+    nick: 'ChildDelete2 me',
+    name: 'ChildDelete2 me',
+    firstName: 'ChildDelete',
+    lastName: 'Me',
+  });
+  await db('cd_profiles').insert({
+    id: 'a7c83682-6990-4acf-ac3e-f7fa3cda5d9e',
+    userId: '5b10692b-42eb-440d-a82c-10128e245af3',
+    name: 'ChildDelete2 me',
+    firstName: 'ChildDelete2',
+    lastName: 'Me',
+    private: true,
+    parents: '{e6bc11aa-b3e4-486e-9746-6472fd829904}',
+  });
+
   // User with avatar
   await db.raw('SELECT lo_from_bytea(20723, \'garbage\');');
   await db('sys_user').insert({

@@ -27,7 +27,8 @@ describe('ProfileModel', () => {
       qB.runAfter = sandbox.stub();
       await qB.softDelete();
       expect(qB.patch).to.have.been.calledOnce.and.calledWith({
-        email: sinon.match(/deleted-account\+\d+@coderdojo.org/),
+        email: null,
+        lastEdited: sinon.match.date,
         name: '',
         lastName: '',
         firstName: '',
@@ -40,6 +41,20 @@ describe('ProfileModel', () => {
       qB.runAfter = sandbox.stub();
       await qB.softDelete();
       expect(qB.runAfter).to.have.been.calledOnce;
+    });
+  });
+  describe('removeChild', () => {
+    it('should define removeChild', () => {
+      const qB = new ProfileModel.QueryBuilder();
+      expect(qB.removeChild).to.be.an('function');
+    });
+    it('should call patch', async () => {
+      const qB = new ProfileModel.QueryBuilder();
+      qB.patch = sandbox.stub();
+      await qB.removeChild([1, 2, 3], 2);
+      expect(qB.patch).to.have.been.calledOnce.and.calledWith({
+        children: [1, 3],
+      });
     });
   });
   describe('afterDelete', () => {

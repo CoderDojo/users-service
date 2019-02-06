@@ -9,16 +9,17 @@ class UserModel extends Model {
   static get QueryBuilder() {
     return class extends QueryBuilder {
       softDelete() {
-        const email = `deleted-account+${new Date().valueOf()}@coderdojo.org`;
-        // TODO : how to handle passwords ?
         return this.patch({
           active: false,
-          nick: email,
-          email,
+          nick: '',
+          email: null,
           name: '',
           lastName: '',
           firstName: '',
-          password: undefined,
+          phone: null,
+          salt: null,
+          pass: null,
+          modified: new Date(),
         });
       }
     };

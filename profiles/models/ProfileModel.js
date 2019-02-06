@@ -8,16 +8,22 @@ class ProfileModel extends Model {
   static get QueryBuilder() {
     return class extends QueryBuilder {
       softDelete() {
-        const email = `deleted-account+${new Date().valueOf()}@coderdojo.org`;
         this.runAfter((model, qB) => {
           return model.$afterDelete();
         });
         return this.patch({
-          email,
+          email: null,
           name: '',
           lastName: '',
           firstName: '',
           phone: '',
+          lastEdited: new Date(),
+        });
+      }
+      removeChild(children, childId) {
+        children.splice(children.indexOf(childId), 1);
+        return this.patch({
+          children,
         });
       }
     };
@@ -70,6 +76,10 @@ class ProfileModel extends Model {
   hasChildren() {
     return this.children && this.children.length > 0;
   }
+  hasParents() {
+    return this.parents && this.parents.length > 0;
+  }
+
   withChildren() {
     const userId = `%${this.userId}%`;
     return ProfileModel.query().select(ProfileModel.publicFields).where(raw('parents::text'), 'LIKE', userId).as('children');
