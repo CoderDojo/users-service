@@ -16,6 +16,7 @@ process.on('unhandledRejection', err => logger.error(err));
 process.on('uncaughtException', err => logger.error(err));
 
 app.use('/users', users);
+app.get('/ping', (req, res) => res.send(204));
 
 app.use((err, req, res, next) => {
   logger.error(err);
