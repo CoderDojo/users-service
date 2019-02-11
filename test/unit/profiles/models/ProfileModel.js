@@ -32,6 +32,10 @@ describe('ProfileModel', () => {
         name: '',
         lastName: '',
         firstName: '',
+        alias: '',
+        badges: [],
+        linkedin: '',
+        twitter: '',
         phone: '',
       });
     });

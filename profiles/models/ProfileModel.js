@@ -14,9 +14,15 @@ class ProfileModel extends Model {
         return this.patch({
           email: null,
           name: '',
+          alias: '',
           lastName: '',
           firstName: '',
           phone: '',
+          twitter: '',
+          linkedin: '',
+          // Badges contains the assertion, containing the email
+          // We lose data, but the format is inconsistent
+          badges: [],
           lastEdited: new Date(),
         });
       }
