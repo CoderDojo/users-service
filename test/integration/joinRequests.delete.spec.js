@@ -1,6 +1,6 @@
 const request = require('supertest');
 
-describe.only('integration:joinRequests:delete', () => {
+describe('integration:joinRequests:delete', () => {
   let app;
 
   beforeEach(() => {

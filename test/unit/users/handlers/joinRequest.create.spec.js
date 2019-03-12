@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const UsersController = {};
 
-describe.only('users/handlers:joinRequest:create', () => {
+describe('users/handlers:joinRequest:create', () => {
   let sandbox;
   let next;
   let req;

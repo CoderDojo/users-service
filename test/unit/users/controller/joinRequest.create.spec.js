@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 
-describe.only('users/controller:joinRequest:create', () => {
+describe('users/controller:joinRequest:create', () => {
   let JRModel;
   let UserModel;
   let sandbox;
