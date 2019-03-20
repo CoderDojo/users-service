@@ -37,7 +37,7 @@ describe('users/handlers:joinRequest:delete', () => {
     UsersController.loadJoinRequest.resolves();
     await handlers[0](req, res, next);
     expect(UsersController.loadJoinRequest).to.have.been.calledOnce.and
-      .calledWith('jr1');
+      .calledWith({ id: 'jr1' });
     expect(next).to.have.been.calledOnce;
   });
   it('should throw if the join request doesnt exists', async () => {
@@ -48,7 +48,7 @@ describe('users/handlers:joinRequest:delete', () => {
     UsersController.loadJoinRequest.throws(new Error('bla'));
     await handlers[0](req, res, next);
     expect(UsersController.loadJoinRequest).to.have.been.calledOnce.and
-      .calledWith('jr1');
+      .calledWith({ id: 'jr1' });
     expect(next).to.have.been.calledOnce;
     expect(next.getCall(0).args[0]).to.be.an('error');
   });

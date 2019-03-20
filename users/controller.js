@@ -68,8 +68,8 @@ class UsersController {
     }
     return true;
   }
-  static async loadJoinRequest(requestId, builder = JoinRequestModel.query()) {
-    const joinRequest = await builder.findOne({ id: requestId });
+  static async loadJoinRequest(query, builder = JoinRequestModel.query()) {
+    const joinRequest = await builder.findOne(query);
     if (!joinRequest) throw NoRequestToJoinFound;
     return joinRequest;
   }

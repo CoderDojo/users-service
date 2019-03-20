@@ -5,7 +5,7 @@ module.exports = [
   // An error will be thrown if it doesn't
   async (req, res, next) => {
     try {
-      await UsersController.loadJoinRequest(req.params.id);
+      await UsersController.loadJoinRequest({ id: req.params.id });
       next();
     } catch (e) {
       return next(e);
