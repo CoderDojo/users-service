@@ -1,7 +1,9 @@
 const fs = require('fs');
 
 module.exports = async (db) => {
-  const sqlFile = fs.readFileSync(`${__dirname}/users.sql`, 'utf8');
+  let sqlFile = fs.readFileSync(`${__dirname}/users.sql`, 'utf8');
+  await db.raw(sqlFile);
+  sqlFile = fs.readFileSync(`${__dirname}/joinRequests.sql`, 'utf8');
   await db.raw(sqlFile);
   await db('sys_user').insert({
     id: 'a5d60790-17c4-4a86-a023-d1558b06f118',
@@ -10,6 +12,12 @@ module.exports = async (db) => {
     name: 'Cat Believes',
     firstName: 'Cat',
     lastName: 'Believes',
+    joinRequests: [{
+      id: 'k_ykWBUHv',
+      dojoId: '338ad4a9-de9a-461c-8af1-359658cfab12',
+      userType: 'champion',
+      timestamp: '2019-03-12T13:15:18.123Z',
+    }],
   });
   await db('cd_profiles').insert({
     id: '51851427-bfd4-4c7d-9387-9d0e669439f0',

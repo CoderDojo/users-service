@@ -1,5 +1,6 @@
 const UserModel = require('./models/UserModel');
-const { NoUserFound, NoProfileFound } = require('./errors');
+const JoinRequestModel = require('./models/JoinRequest');
+const { NoUserFound, NoProfileFound, NoRequestToJoinFound } = require('./errors');
 const nativeEager = require('../util/nativeEager');
 
 class UsersController {
@@ -11,11 +12,10 @@ class UsersController {
     if (!userProfile) throw NoUserFound;
     if (!userProfile.profile) throw NoProfileFound;
     if (userProfile.profile.hasParents()) {
-      await Promise.all(userProfile.profile.parents.map(
-        async (parentUserId) => {
-          const parent = await UsersController.load({ id: parentUserId }, '[profile]');
-          return parent.profile.$query().removeChild(parent.profile.children, userProfile.id);
-        }));
+      await Promise.all(userProfile.profile.parents.map(async (parentUserId) => {
+        const parent = await UsersController.load({ id: parentUserId }, '[profile]');
+        return parent.profile.$query().removeChild(parent.profile.children, userProfile.id);
+      }));
     }
     if (userProfile.profile.hasChildren() && cascade) {
       await Promise.all(userProfile.profile.children.map(
@@ -67,6 +67,25 @@ class UsersController {
       throw NoUserFound;
     }
     return true;
+  }
+  static async loadJoinRequest(query, builder = JoinRequestModel.query()) {
+    const joinRequest = await builder.findOne(query);
+    if (!joinRequest) throw NoRequestToJoinFound;
+    return joinRequest;
+  }
+  static async createJoinRequest(userId, userType, dojoId) {
+    const joinRequest = JoinRequestModel.create(userType, dojoId);
+    const user = await UserModel.query().findOne({ id: userId });
+    if (!user.joinRequests) user.joinRequests = [];
+    user.joinRequests.push(joinRequest);
+    await user.$query().patch({ joinRequests: user.joinRequests });
+    return joinRequest;
+  }
+  static async deleteJoinRequest(userId, requestId) {
+    const user = await UserModel.query().findOne({ id: userId });
+    const index = user.joinRequests.findIndex(e => e.id === requestId);
+    user.joinRequests.splice(index, 1);
+    return user.$query().patch({ joinRequests: user.joinRequests });
   }
 }
 

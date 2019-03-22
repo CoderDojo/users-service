@@ -12,7 +12,15 @@ class NoProfileFound extends Error {
     this.status = 500;
   }
 }
+class NoRequestToJoinFound extends Error {
+  constructor() {
+    super();
+    this.message = 'Invalid requestId';
+    this.status = 404;
+  }
+}
 module.exports = {
   NoUserFound: new NoUserFound(),
   NoProfileFound: new NoProfileFound(),
+  NoRequestToJoinFound: new NoRequestToJoinFound(),
 };
