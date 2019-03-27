@@ -6,6 +6,7 @@ module.exports = {
   joinRequests: {
     create: require('./createJoinRequest'),
     delete: require('./deleteJoinRequest'),
+    load: require('./loadJoinRequest'),
   },
 };
 /* eslint-enable global-require */

@@ -12,6 +12,7 @@ module.exports = async (db) => {
     name: 'Cat Believes',
     firstName: 'Cat',
     lastName: 'Believes',
+    // Get deleted
     joinRequests: [{
       id: 'k_ykWBUHv',
       dojoId: '338ad4a9-de9a-461c-8af1-359658cfab12',
@@ -129,6 +130,13 @@ module.exports = async (db) => {
     name: 'DeleteAvatar me',
     firstName: 'DeleteAvatar',
     lastName: 'Me',
+    // Get Selected
+    joinRequests: [{
+      id: 'SEEK32r4B',
+      dojoId: '338ad4a9-de9a-461c-8af1-359658cfab12',
+      userType: 'champion',
+      timestamp: '2019-03-12T13:15:18.123Z',
+    }],
   });
   await db('cd_profiles').insert({
     id: 'e8e28935-4bbe-4eab-8054-7149b26031d1',
