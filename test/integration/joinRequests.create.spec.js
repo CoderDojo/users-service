@@ -1,6 +1,6 @@
 const request = require('supertest');
 
-describe.only('integration:joinRequests:create', () => {
+describe('integration:joinRequests:create', () => {
   let app;
 
   beforeEach(() => {

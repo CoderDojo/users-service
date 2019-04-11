@@ -2,7 +2,7 @@ const newrelic = require('newrelic'); // eslint-disable-line no-unused-vars
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./util/pino-stream');
-const users = require('./users/routes');
+const usersRouter = require('./users/routes');
 const setupDb = require('./setup-db');
 
 setupDb();
@@ -15,7 +15,8 @@ app.use(bodyParser.json());
 process.on('unhandledRejection', err => logger.error(err));
 process.on('uncaughtException', err => logger.error(err));
 
-app.use('/users', users);
+app.use('/users', usersRouter.user);
+app.use('/join_requests', usersRouter.joinRequests);
 app.get('/ping', (req, res) => res.send(204));
 
 app.use((err, req, res, next) => {
